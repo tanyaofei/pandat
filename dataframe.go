@@ -224,6 +224,54 @@ func (d *DataFrame[E]) Reindex() {
 	}
 }
 
+func (d *DataFrame[E]) Float64() *DataFrame[float64] {
+	seriess := make([]*Series[float64], 0, len(d.seriess))
+	for _, series := range d.seriess {
+		seriess = append(seriess, series.Float64())
+	}
+	df := &DataFrame[float64]{
+		seriess: seriess,
+		index:   d.index,
+	}
+	return df
+}
+
+func (d *DataFrame[E]) Int() *DataFrame[int] {
+	seriess := make([]*Series[int], 0, len(d.seriess))
+	for _, series := range d.seriess {
+		seriess = append(seriess, series.Int())
+	}
+	df := &DataFrame[int]{
+		seriess: seriess,
+		index:   d.index,
+	}
+	return df
+}
+
+func (d *DataFrame[E]) Int64() *DataFrame[int64] {
+	seriess := make([]*Series[int64], 0, len(d.seriess))
+	for _, series := range d.seriess {
+		seriess = append(seriess, series.Int64())
+	}
+	df := &DataFrame[int64]{
+		seriess: seriess,
+		index:   d.index,
+	}
+	return df
+}
+
+func (d *DataFrame[E]) Str() *DataFrame[string] {
+	seriess := make([]*Series[string], 0, len(d.seriess))
+	for _, series := range d.seriess {
+		seriess = append(seriess, series.Str())
+	}
+	df := &DataFrame[string]{
+		seriess: seriess,
+		index:   d.index,
+	}
+	return df
+}
+
 func (d *DataFrame[E]) parseLocationExpr(expr any) map[int]struct{} {
 	ret := make(map[int]struct{}, 32)
 	switch e := expr.(type) {
