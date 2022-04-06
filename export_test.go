@@ -14,7 +14,7 @@ func TestToParquetWithInterfaceDataFrame(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	err = df.toParquet(out)
+	err = df.ToParquet(out)
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +30,7 @@ func TestToParquet(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	err = df.toParquet(out)
+	err = df.ToParquet(out)
 	if err != nil {
 		panic(err)
 	}

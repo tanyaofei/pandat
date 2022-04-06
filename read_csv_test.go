@@ -20,7 +20,7 @@ func TestReadCSV(t *testing.T) {
 	fmt.Println(df)
 
 	out, err := os.Create("1.csv")
-	err = df.toCSV(out)
+	err = df.ToCSV(out)
 	if err != nil {
 		panic(err)
 	}

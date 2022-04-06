@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-func (d *DataFrame[E]) toCSV(w io.Writer) error {
+func (d *DataFrame[E]) ToCSV(w io.Writer) error {
 	writer := csv.NewWriter(w)
 	err := writer.Write(d.Names())
 	if err != nil {
@@ -33,7 +33,7 @@ func (d *DataFrame[E]) toCSV(w io.Writer) error {
 	return nil
 }
 
-func (d *DataFrame[E]) toParquet(w io.Writer) error {
+func (d *DataFrame[E]) ToParquet(w io.Writer) error {
 	//namer := strings.NewReplacer(
 	//    " ", "_",
 	//    ",", "",
