@@ -114,6 +114,16 @@ func (d *DataFrame[E]) Names() []string {
 	return names
 }
 
+// Name returns name of given index
+func (d *DataFrame[E]) Name(index int) string {
+	return d.seriess[index].name
+}
+
+// Index returns index of given name
+func (d DataFrame[E]) Index(name string) int {
+	return d.index[name]
+}
+
 // Rename seriess by giving map
 // renamer: map[string]string or map[int]string, key is the index of series of the name of series, value is new name
 func (d *DataFrame[E]) Rename(renamer map[any]string, inplace bool) *DataFrame[E] {
@@ -187,31 +197,6 @@ func (d *DataFrame[E]) Concat(other *DataFrame[E]) *DataFrame[E] {
 	df := &DataFrame[E]{seriess: seriess}
 	df.Reindex()
 	return df
-}
-
-// NewDataFrame Create a dataframe by given seriess
-func NewDataFrame[E any](values ...*Series[E]) *DataFrame[E] {
-	seriess := make([]*Series[E], 0, len(values))
-	index := make(map[string]int, len(values))
-	length := 0
-	for i, val := range values {
-		if i == 0 {
-			length = val.Len()
-		} else if length != val.Len() {
-			panic("pandat.dataframe.NewDataFrame::all seriess must be the same length")
-		}
-		name := val.Name()
-		if _, ok := index[name]; ok {
-			panic("pandat.dataframe.NewDataFrame::duplicate series name: " + name)
-		}
-		seriess = append(seriess, val)
-		index[name] = i
-	}
-
-	return &DataFrame[E]{
-		seriess,
-		index,
-	}
 }
 
 // Transpose the dataframe
@@ -341,4 +326,29 @@ func (d *DataFrame[E]) parseLocationExpr(expr any) map[int]struct{} {
 	}
 
 	return ret
+}
+
+// NewDataFrame Create a dataframe by given seriess
+func NewDataFrame[E any](values ...*Series[E]) *DataFrame[E] {
+	seriess := make([]*Series[E], 0, len(values))
+	index := make(map[string]int, len(values))
+	length := 0
+	for i, val := range values {
+		if i == 0 {
+			length = val.Len()
+		} else if length != val.Len() {
+			panic("pandat.dataframe.NewDataFrame::all seriess must be the same length")
+		}
+		name := val.Name()
+		if _, ok := index[name]; ok {
+			panic("pandat.dataframe.NewDataFrame::duplicate series name: " + name)
+		}
+		seriess = append(seriess, val)
+		index[name] = i
+	}
+
+	return &DataFrame[E]{
+		seriess,
+		index,
+	}
 }
