@@ -82,11 +82,11 @@ func (d *DataFrame[E]) Series() *Series[E] {
 }
 
 // Seriess return series array in dataframe
-func (d *DataFrame[E]) Seriess() []*Series[E] {
+func (d *DataFrame[E]) Seriess() Seriess[E] {
 	return d.seriess
 }
 
-func (d *DataFrame[E]) Values() []*Series[E] {
+func (d *DataFrame[E]) Values() Seriess[E] {
 	var (
 		nrows  = d.NRows()
 		ncols  = d.NCols()
