@@ -116,7 +116,21 @@ func (d *DataFrame[E]) Names() []string {
 
 // Rename seriess by giving map
 // renamer: map[string]string or map[int]string, key is the index of series of the name of series, value is new name
-func (d *DataFrame[E]) Rename(renamer map[any]string) *DataFrame[E] {
+func (d *DataFrame[E]) Rename(renamer map[any]string, inplace bool) *DataFrame[E] {
+
+	if inplace {
+		for i, series := range d.seriess {
+			if name, ok := renamer[i]; ok {
+				series.name = name
+			} else if name, ok := renamer[series.name]; ok {
+				series.name = name
+			}
+		}
+
+		d.Reindex()
+		return d
+	}
+
 	seriess := make([]*Series[E], 0, len(d.seriess))
 	for i, series := range d.seriess {
 		if name, ok := renamer[i]; ok {
