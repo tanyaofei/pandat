@@ -86,6 +86,23 @@ func (d *DataFrame[E]) Seriess() []*Series[E] {
 	return d.seriess
 }
 
+func (d *DataFrame[E]) Values() []*Series[E] {
+	var (
+		nrows  = d.NRows()
+		ncols  = d.NCols()
+		values = make([]*Series[E], 0, nrows)
+	)
+	for nrow := 0; nrow < nrows; nrow++ {
+		row := make([]E, 0, ncols)
+		for ncol := 0; ncol < ncols; ncol++ {
+			row = append(row, d.Val(nrow, ncol))
+		}
+		values = append(values, NewSeries(fmt.Sprint(nrow), row...))
+	}
+
+	return values
+}
+
 // DropColumn delete given column name or index
 func (d *DataFrame[E]) DropColumn(indexOrName any, inplace bool) *DataFrame[E] {
 	var index int
