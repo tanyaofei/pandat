@@ -86,6 +86,30 @@ func (d *DataFrame[E]) Seriess() []*Series[E] {
 	return d.seriess
 }
 
+// DropColumn delete given column name or index
+func (d *DataFrame[E]) DropColumn(indexOrName any, inplace bool) *DataFrame[E] {
+	var index int
+	switch ion := indexOrName.(type) {
+	case string:
+		index = d.Index(ion)
+	case int:
+		index = ion
+	}
+
+	seriess := append(d.seriess[:index], d.seriess[index+1:]...)
+	if inplace {
+		d.seriess = seriess
+		d.Reindex()
+		return d
+	} else {
+		df := &DataFrame[E]{
+			seriess: seriess,
+		}
+		df.Reindex()
+		return df
+	}
+}
+
 // NCols return number of columns
 func (d *DataFrame[E]) NCols() int {
 	return len(d.seriess)

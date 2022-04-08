@@ -17,7 +17,7 @@ func TestReplace(*testing.T) {
 	df = df.Rename(map[interface{}]string{
 		"A": "AA",
 		"B": "BB",
-	}).Transpose().Transpose().Transpose().Transpose()
+	}, false).Transpose().Transpose().Transpose().Transpose()
 
 	fmt.Println(df)
 
