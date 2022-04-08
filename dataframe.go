@@ -352,6 +352,13 @@ func (d *DataFrame[E]) parseLocationExpr(expr any) map[int]struct{} {
 	return ret
 }
 
+func (d *DataFrame[E]) Copy() *DataFrame[E] {
+	return &DataFrame[E]{
+		seriess: d.seriess,
+		index:   d.index,
+	}
+}
+
 // NewDataFrame Create a dataframe by given seriess
 func NewDataFrame[E any](values ...*Series[E]) *DataFrame[E] {
 	seriess := make([]*Series[E], 0, len(values))

@@ -91,7 +91,7 @@ func (s *Series[E]) AppendAny(vals ...any) *Series[any] {
 	}
 }
 
-func (s *Series[E]) Apply(mapper func(int, E) E) *Series[E] {
+func (s *Series[E]) Apply(mapper func(index int, val E) E) *Series[E] {
 	elements := make([]E, 0, len(s.elements))
 	for i, e := range s.elements {
 		elements = append(elements, mapper(i, e))
@@ -102,7 +102,7 @@ func (s *Series[E]) Apply(mapper func(int, E) E) *Series[E] {
 	}
 }
 
-func (s *Series[E]) ApplyAny(mapper func(int, E) any) *Series[any] {
+func (s *Series[E]) ApplyAny(mapper func(index int, val E) any) *Series[any] {
 	elements := make([]any, 0, len(s.elements))
 	for i, e := range s.elements {
 		elements = append(elements, mapper(i, e))
