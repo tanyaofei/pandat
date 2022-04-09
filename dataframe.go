@@ -146,6 +146,10 @@ func (d *DataFrame[E]) Shape() (int, int) {
 	return d.NRows(), d.NCols()
 }
 
+func (d *DataFrame[E]) Empty() bool {
+	return d.NCols() == 0 || d.NRows() == 0
+}
+
 // Names return seriess names
 func (d *DataFrame[E]) Names() []string {
 	names := make([]string, 0, len(d.seriess))

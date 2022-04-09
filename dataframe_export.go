@@ -6,6 +6,7 @@ import (
 	dynamicstruct "github.com/ompluscator/dynamic-struct"
 	"github.com/xitongsys/parquet-go-source/writerfile"
 	"github.com/xitongsys/parquet-go/writer"
+	"github.com/xuri/excelize/v2"
 	"io"
 	"reflect"
 	"runtime"
@@ -131,4 +132,38 @@ func (d *DataFrame[E]) ToParquet(w io.Writer) error {
 		return err
 	}
 	return nil
+}
+
+type WriteXlsxOption struct {
+	Sheet string
+}
+
+func (d *DataFrame[any]) ToXlsx(w io.Writer, option WriteXlsxOption) error {
+	f := excelize.NewFile()
+
+	if option.Sheet == "" {
+		option.Sheet = "Sheet1"
+		f.NewSheet(option.Sheet)
+	} else {
+		f.NewSheet(option.Sheet)
+	}
+
+	// write header
+	header := d.Names()
+	err := f.SetSheetRow(option.Sheet, "A1", &header)
+	if err != nil {
+		return err
+	}
+
+	// write data
+	for row, values := range d.Values() {
+		vals := values.Slice()
+		err := f.SetSheetRow(option.Sheet, "A"+strconv.Itoa(row+2), &vals)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = f.Write(w)
+	return err
 }

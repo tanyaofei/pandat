@@ -35,3 +35,20 @@ func TestToParquet(t *testing.T) {
 		panic(err)
 	}
 }
+
+func TestToXlsx(t *testing.T) {
+	df := NewDataFrame(
+		NewSeries("A", 1, 2, 3, 4, 5),
+		NewSeries("B", 2, 3, 4, 5, 6),
+	)
+
+	f, err := os.Create("1.xlsx")
+	if err != nil {
+		panic(err)
+	}
+
+	err = df.ToXlsx(f, WriteXlsxOption{})
+	if err != nil {
+		panic(err)
+	}
+}
