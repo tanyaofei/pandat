@@ -2,6 +2,7 @@ package pandat
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -259,6 +260,14 @@ func (d *DataFrame[E]) Transpose() *DataFrame[E] {
 	}
 	df.Reindex()
 	return df
+}
+
+func (d *DataFrame[E]) DTypes() []reflect.Kind {
+	dtypes := make([]reflect.Kind, 0, len(d.seriess))
+	for _, series := range d.seriess {
+		dtypes = append(dtypes, series.DType())
+	}
+	return dtypes
 }
 
 // Reindex this dataframe

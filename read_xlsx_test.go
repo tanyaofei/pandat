@@ -7,7 +7,7 @@ import (
 )
 
 func TestReadExcel(t *testing.T) {
-	f, err := os.Open("/Users/tanyaofei/Desktop/测试数据/1.xls")
+	f, err := os.Open("/Users/tanyaofei/Desktop/测试数据/1.xlsx")
 	if err != nil {
 		panic(err)
 	}
@@ -15,5 +15,6 @@ func TestReadExcel(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Print(df)
+	fmt.Println(df)
+	fmt.Println(df.DTypes())
 }
