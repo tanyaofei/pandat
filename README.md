@@ -1,54 +1,63 @@
 # pandat
 
-A library like python pandas for golang base on 1.18. Provide DataFrame and Series. Supports read from xlsx, csv, parquet and export to xlsx, csv, parquet.
-
-
+A library like python pandas for golang base on 1.18. Provide DataFrame and Series. Supports read from xlsx, csv,
+parquet and export to xlsx, csv, parquet.
 
 ## Generate DataFrame
 
 ```go
-func main() {
-  
-  // Create dataframe
-	df := pandata.NewDataFrame(
-		NewSeries("a", 1, 2, 3, 4, 5),
-    NewSeries("b", 2, 3, 4, 5, 6),
-	)
-  fmt.Println(df)
-  
-  // read from csv
-  dfFromCSV, _ := pandata.ReadCSV("example.csv", pandata.ReadCsvOption{})
-  fmt.Println(dfFromCSV)
-  
-  // read from xlsx
-  dfFromXlsx, _ := pandata.ReadXlsx("1.xlsx", pandata.ReadXlsxOption{})
-  
-  // read from parquet
 
-  fmt.Println(dfFromXlsx)
+
+package main
+
+import (
+	"fmt"
+	"github.com/tanyaofei/pandat"
+)
+
+func main() {
+
+	// Create dataframe
+	df := pandat.NewDataFrame(
+		pandat.NewSeries("a", 1, 2, 3, 4, 5),
+		pandat.NewSeries("b", 2, 3, 4, 5, 6),
+	)
+	fmt.Println(df)
+
+	// read from csv
+	dfFromCSV, _ := pandat.ReadCsvPath("example.csv", pandat.ReadCsvOption{})
+	fmt.Println(dfFromCSV)
+
+	// read from xlsx
+	dfFromXlsx, _ := pandat.ReadXlsxPath("1.xlsx", pandat.ReadXlsxOption{})
+	fmt.Println(dfFromXlsx)
+
+	// read from parquet
+	dfFromParquet, _ := pandat.ReadParquetPath("1.parquet")
+    fmt.Println(dfFromParquet)
 }
 ```
-
-
 
 ## Export DataFrame
 
 ```go
+package main
+
+import "github.com/tanyaofei/pandat"
+
 func main() {
-  df := pandata.NewDataFrame(
-		NewSeries("a", 1, 2, 3, 4, 5),
-    NewSeries("b", 2, 3, 4, 5, 6),
+	df := pandat.NewDataFrame(
+		pandat.NewSeries("a", 1, 2, 3, 4, 5),
+		pandat.NewSeries("b", 2, 3, 4, 5, 6),
 	)
-  df.ToParquet("1.parquet")
-  df.ToCsv("1.csv", pandata.WriteCsvOption{})
-  df.ToXlsx("1.xlsx", pandata.WriteXlsxOption{})
+	df.ToParquetPath("1.parquet")
+	df.ToCsvPath("1.csv", pandat.WriteCSVOption{})
+	df.ToXlsxPath("1.xlsx", pandat.WriteXlsxOption{})
 }
 ```
-
-
 
 ## Futures
 
 1. Supports sav, zsav
 2. More stats
-3. formated printing for dataframe
+3. formatted printing for dataframe
