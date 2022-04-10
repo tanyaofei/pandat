@@ -14,7 +14,7 @@ type ReadXlsxOption struct {
 	RawCellValue bool
 }
 
-func ReadXlsxFromPath(filepath string, option ReadXlsxOption) (*DataFrame[any], error) {
+func ReadXlsxPath(filepath string, option ReadXlsxOption) (*DataFrame[any], error) {
 	r, err := os.Open(filepath)
 	if err != nil {
 		return nil, err

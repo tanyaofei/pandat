@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-func ReadParquetFromPath(filepath string) (*DataFrame[any], error) {
+func ReadParquetPath(filepath string) (*DataFrame[any], error) {
 	f, err := local.NewLocalFileReader(filepath)
 	if err != nil {
 		return nil, err

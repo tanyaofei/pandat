@@ -13,14 +13,14 @@ func TestReadCSV(t *testing.T) {
 	}
 	defer f.Close()
 
-	df, err := ReadCSV(f, ReadCSVOption{})
+	df, err := ReadCsv(f, ReadCsvOption{})
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(df)
 
 	out, err := os.Create("1.csv")
-	err = df.ToCSV(out)
+	err = df.ToCsv(out)
 	if err != nil {
 		panic(err)
 	}

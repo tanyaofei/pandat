@@ -8,14 +8,34 @@ import (
 	"github.com/xitongsys/parquet-go/writer"
 	"github.com/xuri/excelize/v2"
 	"io"
+	"os"
 	"reflect"
 	"runtime"
 	"strconv"
 )
 
-func (d *DataFrame[E]) ToCSV(w io.Writer) error {
-	writer := csv.NewWriter(w)
-	err := writer.Write(d.Names())
+type WriteCSVOption struct {
+	Comma   rune
+	UseCRLF bool
+}
+type WriteXlsxOption struct {
+	Sheet string
+}
+
+func (d *DataFrame[E]) ToCsvPath(filepath string, option WriteCSVOption) error {
+	f, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	return d.ToCsv(f, option)
+}
+
+func (d *DataFrame[E]) ToCsv(f io.Writer, option WriteCSVOption) error {
+	w := csv.NewWriter(f)
+	w.Comma = option.Comma
+	w.UseCRLF = option.UseCRLF
+
+	err := w.Write(d.Names())
 	if err != nil {
 		return err
 	}
@@ -24,17 +44,26 @@ func (d *DataFrame[E]) ToCSV(w io.Writer) error {
 		for _, val := range series.Slice() {
 			values = append(values, fmt.Sprint(val))
 		}
-		err := writer.Write(values)
+		err := w.Write(values)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	writer.Flush()
+	w.Flush()
 	return nil
 }
 
-func (d *DataFrame[E]) ToParquet(w io.Writer) error {
+func (d *DataFrame[E]) ToParquetPath(filepath string) error {
+	f, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+
+	return d.ToParquet(f)
+}
+
+func (d *DataFrame[E]) ToParquet(f io.Writer) error {
 	//namer := strings.NewReplacer(
 	//    " ", "_",
 	//    ",", "",
@@ -99,10 +128,10 @@ func (d *DataFrame[E]) ToParquet(w io.Writer) error {
 	}
 
 	class := schema.Build()
-	f := writerfile.NewWriterFile(w)
-	defer f.Close()
+	w := writerfile.NewWriterFile(f)
+	defer w.Close()
 
-	pw, err := writer.NewParquetWriter(f, class.New(), int64(runtime.NumCPU()))
+	pw, err := writer.NewParquetWriter(w, class.New(), int64(runtime.NumCPU()))
 	if err != nil {
 		return err
 	}
@@ -134,23 +163,27 @@ func (d *DataFrame[E]) ToParquet(w io.Writer) error {
 	return nil
 }
 
-type WriteXlsxOption struct {
-	Sheet string
+func (d *DataFrame[any]) ToXlsxPath(filepath string, option WriteXlsxOption) error {
+	f, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	return d.ToXlsx(f, option)
 }
 
-func (d *DataFrame[any]) ToXlsx(w io.Writer, option WriteXlsxOption) error {
-	f := excelize.NewFile()
+func (d *DataFrame[any]) ToXlsx(f io.Writer, option WriteXlsxOption) error {
+	w := excelize.NewFile()
 
 	if option.Sheet == "" {
 		option.Sheet = "Sheet1"
-		f.NewSheet(option.Sheet)
+		w.NewSheet(option.Sheet)
 	} else {
-		f.NewSheet(option.Sheet)
+		w.NewSheet(option.Sheet)
 	}
 
 	// write header
 	header := d.Names()
-	err := f.SetSheetRow(option.Sheet, "A1", &header)
+	err := w.SetSheetRow(option.Sheet, "A1", &header)
 	if err != nil {
 		return err
 	}
@@ -158,12 +191,12 @@ func (d *DataFrame[any]) ToXlsx(w io.Writer, option WriteXlsxOption) error {
 	// write data
 	for row, values := range d.Values() {
 		vals := values.Slice()
-		err := f.SetSheetRow(option.Sheet, "A"+strconv.Itoa(row+2), &vals)
+		err := w.SetSheetRow(option.Sheet, "A"+strconv.Itoa(row+2), &vals)
 		if err != nil {
 			return err
 		}
 	}
 
-	err = f.Write(w)
+	err = w.Write(f)
 	return err
 }

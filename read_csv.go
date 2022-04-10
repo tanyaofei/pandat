@@ -3,16 +3,25 @@ package pandat
 import (
 	"encoding/csv"
 	"io"
+	"os"
 )
 
-type ReadCSVOption struct {
+type ReadCsvOption struct {
 	NoHeader         bool
 	AlwaysQuotes     bool
 	TrimLeadingSpace bool
 	Separator        rune
 }
 
-func ReadCSV(r io.Reader, option ReadCSVOption) (*DataFrame[any], error) {
+func ReadCsvPath(filepath string, option ReadCsvOption) (*DataFrame[any], error) {
+	f, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	return ReadCsv(f, option)
+}
+
+func ReadCsv(r io.Reader, option ReadCsvOption) (*DataFrame[any], error) {
 	reader := csv.NewReader(r)
 	if option.Separator == 0 {
 		reader.Comma = ','
