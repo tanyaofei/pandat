@@ -52,8 +52,8 @@ func (d *DataFrame[E]) Val(row int, col any) E {
 // Location([]int{1, 2, 3, 4, 5}, nil)
 func (d *DataFrame[E]) Location(rows any, cols any) *DataFrame[E] {
 	var (
-		irows = d.parseLocationExpr(rows)
-		icols = d.parseLocationExpr(cols)
+		irows = d.parseLocationExpr(rows, d.NRows())
+		icols = d.parseLocationExpr(cols, d.NCols())
 	)
 
 	seriess := make([]*Series[E], 0, len(icols))
@@ -342,7 +342,10 @@ func (d *DataFrame[E]) Any() *DataFrame[any] {
 	return df
 }
 
-func (d *DataFrame[E]) parseLocationExpr(expr any) map[int]struct{} {
+func (d *DataFrame[E]) parseLocationExpr(expr any, maxto int) map[int]struct{} {
+	if expr == nil {
+		expr = ":"
+	}
 	ret := make(map[int]struct{}, 32)
 	switch e := expr.(type) {
 	case int:
@@ -362,7 +365,7 @@ func (d *DataFrame[E]) parseLocationExpr(expr any) map[int]struct{} {
 		}
 		sto := fromto[1]
 		if sto == "" {
-			sto = strconv.Itoa(len(d.seriess))
+			sto = strconv.Itoa(maxto)
 		}
 
 		from, err := strconv.Atoi(sfrom)
